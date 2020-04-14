@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
-%matplotlib inline
+# %matplotlib inline
 torch.manual_seed(2)
 
 X = torch.Tensor([[0,0],[0,1], [1,0], [1,1]])
