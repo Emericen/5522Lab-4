@@ -10,6 +10,105 @@ X = torch.Tensor([[0,0],[0,1], [1,0], [1,1]])
 Y = torch.Tensor([0,1,1,0]).view(-1,1)
 
 
+class two_layer_flat(nn.Module):
+	def __init__(self, input_dim=2, hid_dim=2, output_dim=1):
+		super(two_layer_flat, self).__init__()
+		self.lin1 = nn.Linear(input_dim, hid_dim)
+		self.lin2 = nn.Linear(hid_dim, output_dim)
+
+		for m in self.modules():
+			if isinstance(m, nn.Linear):
+				m.weight.data.fill_(1)
+				m.bias.data.fill_(0)
+
+	def forward(self, x):
+		x = self.lin1(x)
+		x = self.lin2(x)
+		return x
+
+
+class two_layer_sigmoid(nn.Module):
+	def __init__(self, input_dim=2, hid_dim=2, output_dim=1):
+		super(two_layer_sigmoid, self).__init__()
+		self.lin1 = nn.Linear(input_dim, hid_dim)
+		self.lin2 = nn.Linear(hid_dim, output_dim)
+
+		for m in self.modules():
+			if isinstance(m, nn.Linear):
+				m.weight.data.fill_(1)
+				m.bias.data.fill_(0)
+
+	def forward(self, x):
+		x = self.lin1(x)
+		x = torch.sigmoid(x)
+		x = self.lin2(x)
+		x = torch.sigmoid(x)
+		return x
+
+
+class two_layer_relu(nn.Module):
+	def __init__(self, input_dim=2, hid_dim=2, output_dim=1):
+		super(two_layer_relu, self).__init__()
+		self.lin1 = nn.Linear(input_dim, hid_dim)
+		self.lin2 = nn.Linear(hid_dim, output_dim)
+
+		for m in self.modules():
+			if isinstance(m, nn.Linear):
+				m.weight.data.fill_(-1)
+				m.bias.data.fill_(0)
+
+	def forward(self, x):
+		x = self.lin1(x)
+		x = torch.relu(x)
+		x = self.lin2(x)
+		x = torch.relu(x)
+		return x
+
+
+class three_layer_sigmoid(nn.Module):
+	def __init__(self, input_dim=2, hid_dim_1=2, hid_dim_2=2, output_dim=1):
+		super(two_layer_relu, self).__init__()
+		self.lin1 = nn.Linear(input_dim, hid_dim_1)
+		self.lin2 = nn.Linear(hid_dim_1, hid_dim_2)
+		self.lin3 = nn.Linear(hid_dim_2, output_dim)
+
+		for m in self.modules():
+			if isinstance(m, nn.Linear):
+				m.weight.data.fill_(-1)
+				m.bias.data.fill_(0)
+
+	def forward(self, x):
+		x = self.lin1(x)
+		x = torch.sigmoid(x)
+		x = self.lin2(x)
+		x = torch.sigmoid(x)
+		x = self.lin3(x)
+		x = torch.sigmoid(x)
+		return x
+
+
+class three_layer_relu(nn.Module):
+	def __init__(self, input_dim=2, hid_dim_1=2, hid_dim_2=2, output_dim=1):
+		super(two_layer_relu, self).__init__()
+		self.lin1 = nn.Linear(input_dim, hid_dim_1)
+		self.lin2 = nn.Linear(hid_dim_1, hid_dim_2)
+		self.lin3 = nn.Linear(hid_dim_2, output_dim)
+
+		for m in self.modules():
+			if isinstance(m, nn.Linear):
+				m.weight.data.fill_(-1)
+				m.bias.data.fill_(0)
+
+	def forward(self, x):
+		x = self.lin1(x)
+		x = torch.relu(x)
+		x = self.lin2(x)
+		x = torch.relu(x)
+		x = self.lin3(x)
+		x = torch.relu(x)
+		return x
+
+
 class MLP2(nn.Module):
 	def __init__(self, input_dim = 2, hid_dim=2, output_dim=1):
 		
@@ -20,7 +119,8 @@ class MLP2(nn.Module):
 
 		for m in self.modules():
 			if isinstance(m, nn.Linear):
-				m.weight.data.normal_(0, 1)
+				# m.weight.data.normal_(0, 1)
+				m.weight.data.fill_(1)
 
 	def forward(self, x):
 		x = self.lin1(x)
@@ -50,22 +150,31 @@ class MLP2(nn.Module):
 
 		print("Complete!")
 
+# print(X)
+# print("//////////////////////")
+# print(Y)
+
+model = two_layer_relu()
+A = torch.Tensor([[-1,2]])
+B = model.forward(A)
+print("result:", B)
 
 
-model = MLP2()
-model.train(X, Y)
 
-model_params = list(model.parameters())
-model_1_w = model_params[0].data.numpy()
-model_1_b = model_params[1].data.numpy()
-model_2_w = model_params[2].data.numpy()
-model_2_b = model_params[3].data.numpy()
+# model = MLP2()
+# model.train(X, Y)
 
-print("//////////////////////")
-print(model_1_w)
-print(model_1_b)
-print("//////////////////////")
-print(model_2_w)
-print(model_2_b)
+# model_params = list(model.parameters())
+# model_1_w = model_params[0].data.numpy()
+# model_1_b = model_params[1].data.numpy()
+# model_2_w = model_params[2].data.numpy()
+# model_2_b = model_params[3].data.numpy()
+
+# print("//////////////////////")
+# print(model_1_w)
+# print(model_1_b)
+# print("//////////////////////")
+# print(model_2_w)
+# print(model_2_b)
 
 
