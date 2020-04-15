@@ -27,7 +27,6 @@ class two_layer_flat(nn.Module):
 		return x
 
 
-
 class two_layer_sigmoid(nn.Module):
 	def __init__(self, input_dim=2, hid_dim=2, output_dim=1):
 		super(two_layer_sigmoid, self).__init__()
@@ -110,7 +109,7 @@ class three_layer_relu(nn.Module):
 		return x
 
 
-def train(model, X, Y, epochs=2001, lr=0.02, momentum=0.9):
+def train_with_MSE(model, X, Y, epochs=2001, lr=0.02, momentum=0.9):
 	loss_func = nn.MSELoss()
 	optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
 	steps = X.size(0)
@@ -127,8 +126,29 @@ def train(model, X, Y, epochs=2001, lr=0.02, momentum=0.9):
 			optimizer.step()	
 
 		if i % 500 == 0:
-				print("Epoch: {0}, Loss: {1}, ".format(i, loss.data.numpy()))		
+			print("Epoch: {0}, Loss: {1}, ".format(i, loss.data.numpy()))		
 	
+
+def train_with_CrossEntropy(model, X, Y, epochs=2001, lr=0.02, momentum=0.9):
+	loss_func = nn.CrossEntropyLoss()
+	optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
+	steps = X.size(0)
+	for i in range(steps):
+		for j in range(steps):
+			data_point = np.random.randint(X.size(0))
+			x_var = Variable(X, requires_grad=False)
+			y_var = Variable(Y, requires_grad=False)
+
+			optimizer.zero_grad()
+			y_hat = model(x_var)
+			loss = loss_func.forward(y_hat, y_var)
+			loss.backward()
+			optimizer.step()	
+
+		if i % 500 == 0:
+			print("Epoch: {0}, Loss: {1}, ".format(i, loss.data.numpy()))		
+
+
 
 # class MLP2(nn.Module):
 # 	def __init__(self, input_dim = 2, hid_dim=2, output_dim=1):
