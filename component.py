@@ -154,10 +154,10 @@ class MLP2(nn.Module):
 # print("//////////////////////")
 # print(Y)
 
-model = two_layer_relu()
-A = torch.Tensor([[-1,2]])
-B = model.forward(A)
-print("result:", B)
+# model = two_layer_relu()
+# A = torch.Tensor([[-1,2]])
+# B = model.forward(A)
+# print("result:", B)
 
 
 
