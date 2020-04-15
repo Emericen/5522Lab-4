@@ -8,7 +8,7 @@ data = np.array(df)
 
 model = component.two_layer_sigmoid(input_dim=10, hid_dim=100, output_dim=9)
 
-
+# compoenent.train(model, data, )
 
 
 

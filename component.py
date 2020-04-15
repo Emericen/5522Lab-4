@@ -27,6 +27,7 @@ class two_layer_flat(nn.Module):
 		return x
 
 
+
 class two_layer_sigmoid(nn.Module):
 	def __init__(self, input_dim=2, hid_dim=2, output_dim=1):
 		super(two_layer_sigmoid, self).__init__()
@@ -109,46 +110,65 @@ class three_layer_relu(nn.Module):
 		return x
 
 
-class MLP2(nn.Module):
-	def __init__(self, input_dim = 2, hid_dim=2, output_dim=1):
+def train(model, X, Y, epochs=2001, lr=0.02, momentum=0.9):
+	loss_func = nn.MSELoss()
+	optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
+	steps = X.size(0)
+	for i in range(steps):
+		for j in range(steps):
+			data_point = np.random.randint(X.size(0))
+			x_var = Variable(X, requires_grad=False)
+			y_var = Variable(Y, requires_grad=False)
+
+			optimizer.zero_grad()
+			y_hat = model(x_var)
+			loss = loss_func.forward(y_hat, y_var)
+			loss.backward()
+			optimizer.step()	
+
+		if i % 500 == 0:
+				print("Epoch: {0}, Loss: {1}, ".format(i, loss.data.numpy()))		
+	
+
+# class MLP2(nn.Module):
+# 	def __init__(self, input_dim = 2, hid_dim=2, output_dim=1):
 		
-		super(MLP2, self).__init__()
+# 		super(MLP2, self).__init__()
 
-		self.lin1 = nn.Linear(input_dim, hid_dim)
-		self.lin2 = nn.Linear(hid_dim, output_dim)
+# 		self.lin1 = nn.Linear(input_dim, hid_dim)
+# 		self.lin2 = nn.Linear(hid_dim, output_dim)
 
-		for m in self.modules():
-			if isinstance(m, nn.Linear):
-				# m.weight.data.normal_(0, 1)
-				m.weight.data.fill_(1)
+# 		for m in self.modules():
+# 			if isinstance(m, nn.Linear):
+# 				# m.weight.data.normal_(0, 1)
+# 				m.weight.data.fill_(1)
 
-	def forward(self, x):
-		x = self.lin1(x)
-		x = torch.sigmoid(x)
-		x = self.lin2(x)
-		x = torch.sigmoid(x)
-		return x
+# 	def forward(self, x):
+# 		x = self.lin1(x)
+# 		x = torch.sigmoid(x)
+# 		x = self.lin2(x)
+# 		x = torch.sigmoid(x)
+# 		return x
 
-	def train(self, X, Y, epochs=2001, lr=0.02, momentum=0.9):
-		loss_func = nn.MSELoss()
-		optimizer = optim.SGD(self.parameters(), lr=lr, momentum=momentum)
-		steps = X.size(0)
-		for i in range(epochs):
-			for j in range(steps):
-				data_point = np.random.randint(X.size(0))
-				x_var = Variable(X, requires_grad=False)
-				y_var = Variable(Y, requires_grad=False)
+# 	def train(self, X, Y, epochs=2001, lr=0.02, momentum=0.9):
+# 		loss_func = nn.MSELoss()
+# 		optimizer = optim.SGD(self.parameters(), lr=lr, momentum=momentum)
+# 		steps = X.size(0)
+# 		for i in range(epochs):
+# 			for j in range(steps):
+# 				data_point = np.random.randint(X.size(0))
+# 				x_var = Variable(X, requires_grad=False)
+# 				y_var = Variable(Y, requires_grad=False)
 
-				optimizer.zero_grad()
-				y_hat = self(x_var)
-				loss = loss_func.forward(y_hat, y_var)
-				loss.backward()
-				optimizer.step()
+# 				optimizer.zero_grad()
+# 				y_hat = self(x_var)
+# 				loss = loss_func.forward(y_hat, y_var)
+# 				loss.backward()
+# 				optimizer.step()
 
-			if i % 500 == 0:
-				print("Epoch: {0}, Loss: {1}, ".format(i, loss.data.numpy()))
+# 			if i % 500 == 0:
+# 				print("Epoch: {0}, Loss: {1}, ".format(i, loss.data.numpy()))
 
-		print("Complete!")
 
 # print(X)
 # print("//////////////////////")
