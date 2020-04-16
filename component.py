@@ -6,9 +6,6 @@ import torch.optim as optim
 import numpy as np
 torch.manual_seed(2)
 
-X = torch.Tensor([[0,0],[0,1], [1,0], [1,1]])
-Y = torch.Tensor([0,1,1,0]).view(-1,1)
-
 
 class two_layer_flat(nn.Module):
 	def __init__(self, input_dim=2, hid_dim=2, output_dim=1):
@@ -109,11 +106,12 @@ class three_layer_relu(nn.Module):
 		return x
 
 
-def train_with_MSE(model, X, Y, epochs=2001, lr=0.02, momentum=0.9):
+def train_with_MSE(model, x, y, epochs=2001, lr=0.02, momentum=0.9):
+	X, Y = torch.Tensor(x), torch.Tensor(y)
 	loss_func = nn.MSELoss()
 	optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
 	steps = X.size(0)
-	for i in range(steps):
+	for i in range(epochs):
 		for j in range(steps):
 			data_point = np.random.randint(X.size(0))
 			x_var = Variable(X, requires_grad=False)
@@ -129,11 +127,12 @@ def train_with_MSE(model, X, Y, epochs=2001, lr=0.02, momentum=0.9):
 			print("Epoch: {0}, Loss: {1}, ".format(i, loss.data.numpy()))		
 	
 
-def train_with_CrossEntropy(model, X, Y, epochs=2001, lr=0.02, momentum=0.9):
+def train_with_CrossEntropy(model, x, y, epochs=2001, lr=0.02, momentum=0.9):
+	X, Y = torch.Tensor(x), torch.tensor(y, dtype=torch.long)
 	loss_func = nn.CrossEntropyLoss()
 	optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
 	steps = X.size(0)
-	for i in range(steps):
+	for i in range(epochs):
 		for j in range(steps):
 			data_point = np.random.randint(X.size(0))
 			x_var = Variable(X, requires_grad=False)
@@ -141,7 +140,11 @@ def train_with_CrossEntropy(model, X, Y, epochs=2001, lr=0.02, momentum=0.9):
 
 			optimizer.zero_grad()
 			y_hat = model(x_var)
-			loss = loss_func.forward(y_hat, y_var)
+			# print(y_hat)
+			# print("///////////////////")
+			# print(y_var)
+			loss = loss_func(y_hat, y_var)
+			# loss = loss_func(x_var, y_var)
 			loss.backward()
 			optimizer.step()	
 
