@@ -32,8 +32,7 @@ class two_layer_sigmoid(nn.Module):
 
 		for m in self.modules():
 			if isinstance(m, nn.Linear):
-				m.weight.data.fill_(1)
-				m.bias.data.fill_(0)
+				m.weight.data.normal_(0,1)
 
 	def forward(self, x):
 		x = self.lin1(x)
@@ -116,15 +115,12 @@ def train_with_MSE(model, x, y, epochs=2001, lr=0.02, momentum=0.9):
 			data_point = np.random.randint(X.size(0))
 			x_var = Variable(X, requires_grad=False)
 			y_var = Variable(Y, requires_grad=False)
-
 			optimizer.zero_grad()
 			y_hat = model(x_var)
 			loss = loss_func.forward(y_hat, y_var)
 			loss.backward()
-			optimizer.step()	
-
-		if i % 500 == 0:
-			print("Epoch: {0}, Loss: {1}, ".format(i, loss.data.numpy()))		
+			optimizer.step()
+		print("Epoch: {0}, Loss: {1}, ".format(i, loss.data.numpy()))
 	
 
 def train_with_CrossEntropy(model, x, y, epochs=2001, lr=0.02, momentum=0.9):
@@ -140,84 +136,30 @@ def train_with_CrossEntropy(model, x, y, epochs=2001, lr=0.02, momentum=0.9):
 
 			optimizer.zero_grad()
 			y_hat = model(x_var)
-			# print(y_hat)
-			# print("///////////////////")
-			# print(y_var)
 			loss = loss_func(y_hat, y_var)
-			# loss = loss_func(x_var, y_var)
 			loss.backward()
 			optimizer.step()	
-
-		if i % 500 == 0:
-			print("Epoch: {0}, Loss: {1}, ".format(i, loss.data.numpy()))		
+		print("Epoch: {0}, Loss: {1}, ".format(i, loss.data.numpy()))
 
 
 
-# class MLP2(nn.Module):
-# 	def __init__(self, input_dim = 2, hid_dim=2, output_dim=1):
-		
-# 		super(MLP2, self).__init__()
+A = torch.Tensor([1,2,3])
+B = torch.Tensor([1,1,1])
 
-# 		self.lin1 = nn.Linear(input_dim, hid_dim)
-# 		self.lin2 = nn.Linear(hid_dim, output_dim)
+C = torch.randn(3, 5, requires_grad=True)
+D = torch.empty(3, dtype=torch.long).random_(5)
 
-# 		for m in self.modules():
-# 			if isinstance(m, nn.Linear):
-# 				# m.weight.data.normal_(0, 1)
-# 				m.weight.data.fill_(1)
-
-# 	def forward(self, x):
-# 		x = self.lin1(x)
-# 		x = torch.sigmoid(x)
-# 		x = self.lin2(x)
-# 		x = torch.sigmoid(x)
-# 		return x
-
-# 	def train(self, X, Y, epochs=2001, lr=0.02, momentum=0.9):
-# 		loss_func = nn.MSELoss()
-# 		optimizer = optim.SGD(self.parameters(), lr=lr, momentum=momentum)
-# 		steps = X.size(0)
-# 		for i in range(epochs):
-# 			for j in range(steps):
-# 				data_point = np.random.randint(X.size(0))
-# 				x_var = Variable(X, requires_grad=False)
-# 				y_var = Variable(Y, requires_grad=False)
-
-# 				optimizer.zero_grad()
-# 				y_hat = self(x_var)
-# 				loss = loss_func.forward(y_hat, y_var)
-# 				loss.backward()
-# 				optimizer.step()
-
-# 			if i % 500 == 0:
-# 				print("Epoch: {0}, Loss: {1}, ".format(i, loss.data.numpy()))
+mse = nn.MSELoss()
+cross = nn.CrossEntropyLoss()
 
 
-# print(X)
-# print("//////////////////////")
-# print(Y)
-
-# model = two_layer_relu()
-# A = torch.Tensor([[-1,2]])
-# B = model.forward(A)
-# print("result:", B)
-
-
-
-# model = MLP2()
-# model.train(X, Y)
-
-# model_params = list(model.parameters())
-# model_1_w = model_params[0].data.numpy()
-# model_1_b = model_params[1].data.numpy()
-# model_2_w = model_params[2].data.numpy()
-# model_2_b = model_params[3].data.numpy()
-
-# print("//////////////////////")
-# print(model_1_w)
-# print(model_1_b)
-# print("//////////////////////")
-# print(model_2_w)
-# print(model_2_b)
-
+# print(mse(A,B)) # 1.6667
+# print(mse(A,A)) # 0
+# print(mse(B,B)) # 0
+# print("////////////////")
+print(C)
+print(D)
+print(cross(C,D))
+# print(D)
+print("////////////////")
 
